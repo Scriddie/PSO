@@ -4,6 +4,9 @@ initialize swarm, update location on each iteration
 import numpy as np
 from copy import deepcopy
 from plots import rastrigin
+import matplotlib.pyplot as plt
+from matplotlib import cm
+import imageio
 
 best_fitness = np.inf
 best_position = np.array([0, 0])
@@ -37,7 +40,7 @@ def update(particles, fitness_func):
         update.append(v)
     for i, p in enumerate(particles):
         p["pos"] += update[i]
-        p["fit"] = fitness_func(p["pos"])
+        p["fit"] = fitness_func(p["pos"][0], p["pos"][1])
         if p["fit"] > best_fitness:
             best_fitness = p["fit"]
             best_position = p["pos"]
@@ -53,4 +56,34 @@ def train(num_particles, num_iter, fitness_func):
 
 
 if __name__ == "__main__":
-    history = train(2, 10, rastrigin)
+
+    # TODO: check if this works, numbers in history look good at first sight but gif doesnt do anything
+    history = train(10, 50, rastrigin)
+
+    buffer = []
+    for state in history:
+        fig = plt.figure()
+        ax = fig.gca(projection="3d")
+        X = np.arange(-2, 2, 0.1)
+        Y = np.arange(-2, 2, 0.1)
+        X, Y = np.meshgrid(X, Y)
+        a = 0
+        b = 1000
+        Z = rastrigin(X, Y)
+        surf = ax.plot_surface(X, Y, Z, cmap=cm.plasma, linewidth=0,
+        antialiased=False)
+
+        # visualize particles
+        x_points = [i["pos"][0] for i in history[0]]
+        y_points = [i["pos"][0] for i in history[0]]
+        z_points = [i["fit"] for i in history[0]]
+        ax.scatter3D(x_points, y_points, z_points, c=z_points, cmap='hsv');
+
+        fig.canvas.draw()       # draw the canvas, cache the renderer
+        image = np.frombuffer(fig.canvas.tostring_rgb(), dtype='uint8')
+        image  = image.reshape(fig.canvas.get_width_height()[::-1] + (3,))
+        buffer.append(image)
+
+    imageio.mimsave("particles.gif", buffer, )
+
+
