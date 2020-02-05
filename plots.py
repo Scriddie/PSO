@@ -11,18 +11,18 @@ def plot_3d(fn, x1_low, x1_high, x2_low, x2_high, stepsize=0.1):
     x1, x2 = np.meshgrid(x1_steps, x2_steps)
     
     # Plot
-    y = fn(np.stack((x1, x2), axis=-1))
+    y = fn(x1, x2)
     fig = plt.figure()
     ax = fig.gca(projection="3d")
     ax.plot_surface(x1, x2, y, cmap=cm.plasma, linewidth=0, antialiased=False)
     plt.show()
 
-def rosenbrock(X, a=0, b=1000):
-    x1 = X[..., 0]
-    x2 = X[..., 1]
+def rosenbrock(x1, x2, a=0, b=1000):
     return (a - x1) ** 2 + b * (x2 - x1 ** 2) ** 2
 
-def rastrigin(X, a=1):
+def rastrigin(x1, x2, a=1):
+    X = np.stack((x1, x2), axis=-1)
+    
     res = X ** 2 - a * np.cos(2 * np.pi * X)
     return 2 * a + np.sum(res, axis=-1)
 
