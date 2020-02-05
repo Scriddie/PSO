@@ -4,43 +4,28 @@ from mpl_toolkits import mplot3d
 from matplotlib import cm
 
 
-### Rosenbrock
-def plt_rosenbrock():
+def plot_3d(fn, x1_low, x1_high, x2_low, x2_high, stepsize=0.1):
+    # Create 2d raster
+    x1_steps = np.arange(x1_low, x1_high, stepsize)
+    x2_steps = np.arange(x2_low, x2_high, stepsize)
+    x1, x2 = np.meshgrid(x1_steps, x2_steps)
+    
+    # Plot
+    y = fn(np.stack((x1, x2), axis=-1))
     fig = plt.figure()
     ax = fig.gca(projection="3d")
-    X = np.arange(-2, 2, 0.1)
-    Y = np.arange(-2, 2, 0.1)
-    X, Y = np.meshgrid(X, Y)
-    a = 0
-    b = 1000
-    Z = np.add(
-        np.square(np.subtract(a, X)),
-        np.multiply(b, np.square(np.subtract(Y, np.square(X))))
-    )
-    surf = ax.plot_surface(X, Y, Z, cmap=cm.plasma, linewidth=0,
-    antialiased=False)
+    ax.plot_surface(x1, x2, y, cmap=cm.plasma, linewidth=0, antialiased=False)
     plt.show()
 
+def rosenbrock(X, a=0, b=1000):
+    x1 = X[..., 0]
+    x2 = X[..., 1]
+    return (a - x1) ** 2 + b * (x2 - x1 ** 2) ** 2
 
-def rastrigin(*X, **kwargs):
-    A = kwargs.get('A', 10)
-    return A*len(X) + sum([(x**2 - A * np.cos(2 * np.pi * x)) for x in X])
-
-### Rastrigin
-def plt_rastrigin():
-    fig = plt.figure()
-    ax = fig.gca(projection="3d")
-    X = np.arange(-2, 2, 0.1)
-    Y = np.arange(-2, 2, 0.1)
-    X, Y = np.meshgrid(X, Y)
-    Z = rastrigin(X, Y, A=1)
-    surf = ax.plot_surface(X, Y, Z, cmap=cm.plasma, linewidth=0,
-    antialiased=False)
-    plt.show()
-
+def rastrigin(X, a=1):
+    res = X ** 2 - a * np.cos(2 * np.pi * X)
+    return 2 * a + np.sum(res, axis=-1)
 
 if __name__ == "__main__":
-    plt_rosenbrock()
-    plt_rastrigin()    
-
-
+    plot_3d(rosenbrock, -2, 2, -2, 2)
+    plot_3d(rastrigin, -2, 2, -2, 2)
