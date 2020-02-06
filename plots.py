@@ -39,7 +39,7 @@ def visualize_heatmap(fn, history, extent):
 
         # visualize particles
         x_points = [i["pos"][0] for i in state]
-        y_points = [i["pos"][0] for i in state]
+        y_points = [i["pos"][1] for i in state]
         z_points = [i["fit"] for i in state]
         sns.scatterplot(x=x_points, y=y_points)
 
@@ -52,6 +52,8 @@ def visualize_heatmap(fn, history, extent):
 
 
 def visualize_3D(fn, history):
+    # TODO: this whole thing about the plot is still not quite right
+    # (0 point is different)
     buffer = []
     for state in history:
         plt.close("all")
@@ -68,7 +70,7 @@ def visualize_3D(fn, history):
 
         # visualize particles
         x_points = [i["pos"][0] for i in state]
-        y_points = [i["pos"][0] for i in state]
+        y_points = [i["pos"][1] for i in state]
         z_points = [i["fit"] for i in state]
         ax.scatter3D(x_points, y_points, z_points, c=z_points, cmap='hsv')
 

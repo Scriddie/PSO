@@ -84,6 +84,14 @@ def train(fn, num_particles, num_iter, extent):
         best_fit_hist.append(deepcopy(best_fitness))
     return history
 
+def debug_pos(history):
+    for state in history[0]:
+        x_points = [i["pos"][0] for i in state]
+        y_points = [i["pos"][1] for i in state]
+        z_points = [i["fit"] for i in state]
+        sns.scatterplot(x=x_points, y=y_points)
+        plt.show()
+
 def debug(history):
     global best_fitness
     global best_position
@@ -92,7 +100,7 @@ def debug(history):
         avg_v = np.round(np.mean(v), 3)
         avg_x = np.round(np.mean([p["pos"][0] for p in state]))
         avg_y = np.round(np.mean([p["pos"][1] for p in state]))
-        print(f"{i}\t best_position: {np.round(best_pos_hist[i], 3)} " + 
+        print(f"{i} - best_position: {np.round(best_pos_hist[i], 3)} " + 
               f"({np.round(best_fit_hist[i])}) - avg speed: {avg_v}" +
               f"- avg position: ({avg_x}, {avg_y})")
 
@@ -100,10 +108,12 @@ def debug(history):
 if __name__ == "__main__":
     fn = utils.rosenbrock
     extent = [-2, 2, -2, 2]
-    history = train(fn, 10, 200, extent)
+    history = train(fn, 10, 500, extent)
     debug(history)
     # plots.visualize_3D(utils.rastrigin, history)
     plots.visualize_heatmap(fn, history, extent)
+
+    # debug_pos(history)
 
 
 
