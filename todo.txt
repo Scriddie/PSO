@@ -1,4 +1,3 @@
-Compare to gradient descent
 Combine grad desc with PSO?
 Toggle through Step by Step
 Put nice colourbar at side

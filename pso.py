@@ -9,14 +9,15 @@ import matplotlib.pyplot as plt
 from matplotlib import cm
 import seaborn as sns
 import imageio
+from scipy import optimize
 from importlib import reload
 reload(plots)
 reload(utils)
 
 best_fitness = np.inf
-best_fit_hist = [best_fitness]
+best_fit_hist = [deepcopy(best_fitness)]
 best_position = np.array([0, 0])
-best_pos_hist = [best_position]
+best_pos_hist = [deepcopy(best_position)]
 
 def initialize(fn, n, x_min, x_max, y_min, y_max):
     global best_fitness
@@ -85,6 +86,7 @@ def train(fn, num_particles, num_iter, extent):
         best_fit_hist.append(deepcopy(best_fitness))
     return history
 
+
 def debug_pos(history):
     for state in history[0]:
         x_points = [i["pos"][0] for i in state]
@@ -92,6 +94,7 @@ def debug_pos(history):
         z_points = [i["fit"] for i in state]
         sns.scatterplot(x=x_points, y=y_points)
         plt.show()
+
 
 def debug(history):
     global best_fitness
@@ -107,14 +110,12 @@ def debug(history):
 
 
 if __name__ == "__main__":
+    # TODO: rosenbrock minimum is at 1, 1, just so we know...
     fn = utils.rastrigin
     extent = [-2, 2, -2, 2]
     history = train(fn, 10, 500, extent)
     debug(history)
     # plots.visualize_3D(utils.rastrigin, history)
     plots.visualize_heatmap(fn, history, extent)
-
-    # debug_pos(history)
-
 
 
