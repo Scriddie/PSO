@@ -41,7 +41,7 @@ def initialize(fn, n, x_min, x_max, y_min, y_max):
     return particles
 
 
-def update(fn, particles, a):
+def update(fn, particles, a, b):
     global best_fitness
     global best_position
     update = []
@@ -49,7 +49,7 @@ def update(fn, particles, a):
         r_own = np.random.uniform(0, 1)
         r_global = np.random.uniform(0, 1)
         prev_speed = a * p["v"]
-        own_best_diff = r_own * -(p["pos"] - p["best_pos"])
+        own_best_diff = b * r_own * -(p["pos"] - p["best_pos"])
         global_best_diff = r_global * -(p["pos"] - best_position)
         v = (prev_speed + own_best_diff + global_best_diff)
         v_total = np.sqrt(np.sum(np.square(v)))
@@ -78,7 +78,8 @@ def train(fn, num_particles, num_iter, extent):
     history = []
     for i in range(num_iter):
         a = (num_iter*2 - i) / (num_iter*2)
-        particles = update(fn, particles, a)
+        b = (num_iter*3 - i) / (num_iter*3)
+        particles = update(fn, particles, a, b)
         history.append(deepcopy(particles))
         best_pos_hist.append(deepcopy(best_position))
         best_fit_hist.append(deepcopy(best_fitness))
@@ -108,7 +109,7 @@ def debug(history):
 if __name__ == "__main__":
     fn = utils.rastrigin
     extent = [-2, 2, -2, 2]
-    history = train(fn, 10, 300, extent)
+    history = train(fn, 10, 500, extent)
     debug(history)
     # plots.visualize_3D(utils.rastrigin, history)
     plots.visualize_heatmap(fn, history, extent)
