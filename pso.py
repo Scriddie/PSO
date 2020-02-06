@@ -42,7 +42,7 @@ def initialize(fn, n, x_min, x_max, y_min, y_max):
     return particles
 
 
-def update(fn, particles, a, b):
+def update(fn, particles, a, b, c):
     global best_fitness
     global best_position
     update = []
@@ -51,7 +51,7 @@ def update(fn, particles, a, b):
         r_global = np.random.uniform(0, 1)
         prev_speed = a * p["v"]
         own_best_diff = b * r_own * -(p["pos"] - p["best_pos"])
-        global_best_diff = r_global * -(p["pos"] - best_position)
+        global_best_diff = c* r_global * -(p["pos"] - best_position)
         v = (prev_speed + own_best_diff + global_best_diff)
         v_total = np.sqrt(np.sum(np.square(v)))
         # some rather arbitrary speed clipping
@@ -78,9 +78,11 @@ def train(fn, num_particles, num_iter, extent):
     particles = initialize(fn, num_particles, *extent)
     history = []
     for i in range(num_iter):
-        a = (num_iter*2 - i) / (num_iter*2)
-        b = (num_iter*3 - i) / (num_iter*3)
-        particles = update(fn, particles, a, b)
+        a = (num_iter * 3 - i) / (num_iter * 3)
+        # b = (num_iter * 5 - i) / (num_iter * 5)
+        b = 1
+        c = 1
+        particles = update(fn, particles, a, b, c)
         history.append(deepcopy(particles))
         best_pos_hist.append(deepcopy(best_position))
         best_fit_hist.append(deepcopy(best_fitness))
@@ -110,12 +112,22 @@ def debug(history):
 
 
 if __name__ == "__main__":
-    # TODO: rosenbrock minimum is at 1, 1, just so we know...
-    fn = utils.rastrigin
+
+    # TODO: somehow the particles seem to think 1, 1 is 0 for rastrigin
+    
     extent = [-2, 2, -2, 2]
-    history = train(fn, 10, 500, extent)
+    num_particles = 20
+    num_iter = 500
+
+    fn = utils.rosenbrock
+    history = train(fn, num_particles, num_iter, extent)
     debug(history)
-    # plots.visualize_3D(utils.rastrigin, history)
-    plots.visualize_heatmap(fn, history, extent)
+    plots.visualize_heatmap(fn, history, extent, "gifs_to_keep/pso_rosenbrock.gif")
+
+    fn = utils.rastrigin
+    history = train(fn, num_particles, num_iter, extent)
+    debug(history)
+    plots.visualize_heatmap(fn, history, extent, "gifs_to_keep/pso_rastrigin.gif")
+
 
 

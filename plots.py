@@ -21,7 +21,7 @@ def plot_3d(fn, x1_low, x1_high, x2_low, x2_high, stepsize=0.1):
     plt.show()
 
 
-def visualize_heatmap(fn, history, extent):
+def visualize_heatmap(fn, history, extent, fname="particles.gif"):
     # heatmap version
     buffer = []
     for i, state in enumerate(history):
@@ -33,7 +33,7 @@ def visualize_heatmap(fn, history, extent):
         Y = np.arange(extent[2], extent[3], 0.1)
         X_grid, Y_grid = np.meshgrid(X, Y)
         Z = fn(X_grid, Y_grid)
-        heat = plt.imshow(Z, extent=extent, cmap='hot')
+        heat = plt.imshow(Z, extent=extent, cmap='jet')
         # heat = sns.heatmap(Z)
         # heat.invert_yaxis()
 
@@ -48,7 +48,7 @@ def visualize_heatmap(fn, history, extent):
         image  = image.reshape(fig.canvas.get_width_height()[::-1] + (3,))
         buffer.append(image)
 
-    imageio.mimsave("particles.gif", buffer, )
+    imageio.mimsave(fname, buffer, )
 
 
 def visualize_3D(fn, history):

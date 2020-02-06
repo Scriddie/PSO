@@ -125,14 +125,13 @@ def debug(history):
 
 
 if __name__ == "__main__":
-    # TODO: we do rastrigin for now!
-    # fn = utils.rastrigin
-    # grad_fn = utils.rastrigin_grad
-    fn = utils.rosenbrock
-    grad_fn = utils.rosenbrock_grad
+    fn = utils.rastrigin
+    grad_fn = utils.rastrigin_grad
+    # fn = utils.rosenbrock
+    # grad_fn = utils.rosenbrock_grad
     extent = [-2, 2, -2, 2]
     history = train(fn, grad_fn, 20, 500, extent)
     debug(history)
-    plots.visualize_heatmap(fn, history, extent)
+    plots.visualize_heatmap(fn, history, extent, "gifs_to_keep/pso_desc_rastrigin.gif")
 
 

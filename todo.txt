@@ -1,5 +1,5 @@
-Combine grad desc with PSO?
 Toggle through Step by Step
 Put nice colourbar at side
 Mark final solution, print as number
-Draw cool fading lines ;)
+Mark actual analytical solution for comparison
+Draw cool fading lines
