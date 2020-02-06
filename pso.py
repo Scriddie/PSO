@@ -106,9 +106,9 @@ def debug(history):
 
 
 if __name__ == "__main__":
-    fn = utils.rosenbrock
+    fn = utils.rastrigin
     extent = [-2, 2, -2, 2]
-    history = train(fn, 10, 500, extent)
+    history = train(fn, 10, 300, extent)
     debug(history)
     # plots.visualize_3D(utils.rastrigin, history)
     plots.visualize_heatmap(fn, history, extent)
