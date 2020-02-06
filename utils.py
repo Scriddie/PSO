@@ -4,7 +4,7 @@ def rosenbrock(x1, x2, a=1, b=100):
     return (a - x1) ** 2 + b * (x2 - x1 ** 2) ** 2
 
 
-def rosenbrock_grad(fn, pos, a=1, b=100):
+def rosenbrock_grad(pos, a=1, b=100):
     x = pos[0]
     y = pos[1]
     x_grad = 2.0 * (a - x) * (-1.0) + 2.0 * b * (y - np.square(x)) * (-2.0 * x)
@@ -18,7 +18,7 @@ def rastrigin(x1, x2, a=10):
     return 2 * a + np.sum(res, axis=-1)
 
 
-def rastrigin_grad(fn, pos, A=10):
+def rastrigin_grad(pos, A=10):
     x = pos[0]
     y = pos[1]
     x_grad = A * len(pos) + 2*x - 10*np.sin(2*np.pi*x) * 2*np.pi

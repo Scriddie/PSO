@@ -13,12 +13,11 @@ reload(plots)
 reload(utils)
 
 
-def gradient_descent(fn, fn_grad):
+def gradient_descent(fn, fn_grad, initial_pos):
     """perform a couple rounds of grad desc with some adaptive learning rates"""
     scale = 5
     extent = [-scale, scale, -scale, scale]
-    pos = np.array([3.8, 3.8])
-    pos_history = [deepcopy(pos)]
+    pos_history = [deepcopy(initial_pos)]
     for i in range(100000):
         # grad = GRAD_FUNC(fn, pos, 1, 1)
         grad = fn_grad(fn, pos)
@@ -37,13 +36,15 @@ def gradient_descent(fn, fn_grad):
 
 
 def visualize_grad_desc():
+    initial_pos = np.array([3.8, 3.8])
+
     fn = utils.rastrigin
     fn_grad = utils.rastrigin_grad
-    gradient_descent(fn, fn_grad)
+    gradient_descent(fn, fn_grad, initial_pos)
 
     fn = utils.rosenbrock
     fn_grad = utils.rosenbrock_grad
-    gradient_descent(fn, fn_grad)
+    gradient_descent(fn, fn_grad, initial_pos)
 
 
 if __name__ == "__main__":
