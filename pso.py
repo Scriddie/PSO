@@ -30,25 +30,25 @@ def initialize(fn, n, x_min, x_max, y_min, y_max):
         }
         for i in range(n)
     ]
-    # TODO: this doesbt seem to work
+    # TODO: this doesnt seem to work
     for p in particles:
-        p["best_pos"] = (p["pos"])
-        p["fit"] = fn(p["pos"][0], p["pos"][1])
-        p["best_fit"] = p["fit"]
+        p["best_pos"] = deepcopy(p["pos"])
+        p["fit"] = deepcopy(fn(p["pos"][0], p["pos"][1]))
+        p["best_fit"] = deepcopy(p["fit"])
         if p["fit"] < best_fitness:
-            best_fitness = p["fit"]
-            best_position = p["pos"]
+            best_fitness = deepcopy(p["fit"])
+            best_position = deepcopy(p["pos"])
     return particles
 
 
-def update(fn, particles):
+def update(fn, particles, a):
     global best_fitness
     global best_position
     update = []
     for p in particles:
         r_own = np.random.uniform(0, 1)
         r_global = np.random.uniform(0, 1)
-        prev_speed = p["v"]
+        prev_speed = a * p["v"]
         own_best_diff = r_own * -(p["pos"] - p["best_pos"])
         global_best_diff = r_global * -(p["pos"] - best_position)
         v = (prev_speed + own_best_diff + global_best_diff)
@@ -58,14 +58,13 @@ def update(fn, particles):
         if v_total > max_speed:
             v = (v/v_total) * max_speed
         update.append(v)
-    # TODO: seems like speed is changing but direction is not?
     for i, p in enumerate(particles):
         p["v"] = update[i]
-        p["pos"] += update[i] * 0.01
+        p["pos"] += update[i] * 0.01  # treat dem particles carefully
         p["fit"] = fn(p["pos"][0], p["pos"][1])
         if p["fit"] < p["best_fit"]:
-            p["best_fit"] = p["fit"]
-            p["best_pos"] = p["pos"]
+            p["best_fit"] = deepcopy(p["fit"])
+            p["best_pos"] = deepcopy(p["pos"])
         if p["fit"] < best_fitness:
             best_fitness = p["fit"]
             best_position = p["pos"]
@@ -78,7 +77,8 @@ def train(fn, num_particles, num_iter, extent):
     particles = initialize(fn, num_particles, *extent)
     history = []
     for i in range(num_iter):
-        particles = update(fn, particles)
+        a = (num_iter*2 - i) / (num_iter*2)
+        particles = update(fn, particles, a)
         history.append(deepcopy(particles))
         best_pos_hist.append(deepcopy(best_position))
         best_fit_hist.append(deepcopy(best_fitness))
