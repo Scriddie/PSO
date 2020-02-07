@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits import mplot3d
-from matplotlib import cm
+from matplotlib import cm, animation
 import utils
 import seaborn as sns
 import imageio
@@ -20,35 +20,51 @@ def plot_3d(fn, x1_low, x1_high, x2_low, x2_high, stepsize=0.1):
     ax.plot_surface(x1, x2, y, cmap=cm.plasma, linewidth=0, antialiased=False)
     plt.show()
 
-
 def visualize_heatmap(fn, history, extent, fname="particles.gif"):
-    # heatmap version
-    buffer = []
-    for i, state in enumerate(history):
-        if i % 5 != 0:
-            continue
-        plt.close("all")
-        fig = plt.figure()
-        X = np.arange(extent[0], extent[1], 0.1)
-        Y = np.arange(extent[2], extent[3], 0.1)
-        X_grid, Y_grid = np.meshgrid(X, Y)
-        Z = fn(X_grid, Y_grid)
-        heat = plt.imshow(Z, extent=extent, cmap='jet')
-        # heat = sns.heatmap(Z)
-        # heat.invert_yaxis()
-
-        # visualize particles
-        x_points = [i["pos"][0] for i in state]
-        y_points = [i["pos"][1] for i in state]
-        z_points = [i["fit"] for i in state]
-        sns.scatterplot(x=x_points, y=y_points)
-
-        fig.canvas.draw()       # draw the canvas, cache the renderer
-        image = np.frombuffer(fig.canvas.tostring_rgb(), dtype='uint8')
-        image  = image.reshape(fig.canvas.get_width_height()[::-1] + (3,))
-        buffer.append(image)
-
-    imageio.mimsave(fname, buffer, )
+    fig = plt.figure()
+    ax = plt.axes()
+    
+    # Create heatmap
+    X = np.arange(extent[0], extent[1], 0.1)
+    Y = np.arange(extent[2], extent[3], 0.1)
+    X_grid, Y_grid = np.meshgrid(X, Y)
+    Z = fn(X_grid, Y_grid)
+    plt.imshow(Z, extent=extent, cmap=cm.jet)
+    
+    # Create initial scatterplot
+    x_points = [p["pos"][0] for p in history[0]]
+    y_points = [p["pos"][1] for p in history[0]]
+    sc = ax.scatter(x=x_points, y=y_points, color="black")
+    
+    # Create initial lineplots
+    num_particles = len(history[0])
+    lines = []
+    for i in range(num_particles):
+        lines.append(ax.plot(0, 0, color="blue")[0])
+    
+    # Function for animating scatterplot
+    def animate(i):
+        state = history[i]
+        # update particles
+        x_points = [p["pos"][0] for p in state]
+        y_points = [p["pos"][1] for p in state]
+        sc.set_offsets(np.c_[x_points,y_points])
+        
+        # update motion lines
+        num_frames = min(20, i)
+        x_steps = np.empty((num_particles, num_frames))
+        y_steps = np.empty((num_particles, num_frames))
+        
+        for frame, all_particles in enumerate(history[i-num_frames:i]):
+            for p_index, particle in enumerate(all_particles):
+                x_steps[p_index, frame] = particle["pos"][0]
+                y_steps[p_index, frame] = particle["pos"][1]
+            
+        for i, line in enumerate(lines):
+            line.set_data(x_steps[i], y_steps[i])
+            
+    anim = animation.FuncAnimation(fig, animate, 60, interval=1000, blit=False)
+    anim.save(fname, writer='imagemagick', fps=120)
 
 
 def visualize_3D(fn, history):
