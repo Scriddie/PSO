@@ -21,9 +21,18 @@ def plot_3d(fn, x1_low, x1_high, x2_low, x2_high, stepsize=0.1):
     ax.plot_surface(x1, x2, y, cmap=cm.plasma, linewidth=0, antialiased=False)
     plt.show()
 
-def visualize_heatmap(fn, history, extent, fname="particles.gif", output = "show"):
+def visualize_heatmap(fn, history, extent, trail_lenght = 20,
+    fname="particles.gif", output = "show"):
     fig = plt.figure()
     ax = plt.axes()
+
+    # Step number needs to be global for the interactive stepping
+    global step_num
+    step_num = 0
+
+    textstr = f'Step = {step_num}'
+    # these are matplotlib.patch.Patch properties for the textboax
+    props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)
     
     # Create heatmap
     X = np.arange(extent[0], extent[1], 0.1)
@@ -50,10 +59,20 @@ def visualize_heatmap(fn, history, extent, fname="particles.gif", output = "show
     lines = []
     for i in range(num_particles):
         lines.append(ax.plot(0, 0, color="blue")[0])
+
+    # Create the initial text plot
+    # place a text box in upper left in axes coords
+    label = ax.text(0.08, 0.94, textstr, transform=ax.transAxes, fontsize=14,
+        verticalalignment='top', bbox=props)
     
     # Function for animating scatterplot
     def animate(i):
         state = history[i]
+
+        # Update the text box
+        textstr = f'Step = {int(i)}'
+        label.set_text(textstr)
+
         # update particles
         x_points = [p["pos"][0] for p in state]
         y_points = [p["pos"][1] for p in state]
@@ -63,7 +82,7 @@ def visualize_heatmap(fn, history, extent, fname="particles.gif", output = "show
         average_y = np.mean(y_points)
         
         # update motion lines
-        num_frames = min(20, i)
+        num_frames = min(trail_lenght, i)
         x_steps = np.empty((num_particles, num_frames))
         y_steps = np.empty((num_particles, num_frames))
 
@@ -76,20 +95,18 @@ def visualize_heatmap(fn, history, extent, fname="particles.gif", output = "show
             line.set_data(x_steps[i], y_steps[i])
     
     if(output == "step"):
-        # Step through the frames
-        global index
-        index = 0       
+        # Step through the frames   
         
         def on_keyboard(event):
-            global index
+            global step_num
             if event.key == 'right':
-                if(index < len(history)):
-                    index += 1
+                if(step_num < len(history)-1):
+                    step_num += 1
             elif event.key == 'left':
-                if(index != 0):
-                    index -= 1
+                if(step_num != 0):
+                    step_num -= 1
                 
-            animate(index)
+            animate(step_num)
 
             fig.canvas.draw()
             fig.canvas.flush_events()
