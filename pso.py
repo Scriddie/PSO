@@ -138,5 +138,3 @@ if __name__ == "__main__":
     plots.visualize_heatmap(fn, history, extent, 
       os.path.join(img_dir, "pso_rastrigin.gif"), output=output)
 
-
-

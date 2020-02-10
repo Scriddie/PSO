@@ -2,6 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits import mplot3d
 from matplotlib import cm, animation
+import matplotlib.image as mpimg
+from matplotlib.offsetbox import TextArea, DrawingArea, OffsetImage, AnnotationBbox
 from scipy.optimize import minimize
 import utils
 import seaborn as sns
@@ -39,6 +41,12 @@ def visualize_heatmap(fn, history, extent, fname="particles.gif", output = "show
     average_x = np.mean([p["pos"][0] for p in history[0]])
     average_y = np.mean([p["pos"][1] for p in history[0]])
     avg_pos, = ax.plot(average_x, average_y, "y*")
+
+    rainbow_cat = mpimg.imread('e289217a-3614-4e78-b7dc-c4cb4fdd0ff2.jfif')
+    imagebox = OffsetImage(rainbow_cat, zoom=0.1)
+    ab = AnnotationBbox(imagebox, xy=(average_x, average_y), xycoords="data")
+    # ab.set_animated(True)
+    ax.add_artist(ab)
     
     # Create initial scatterplot
     x_points = [p["pos"][0] for p in history[0]]
@@ -62,6 +70,7 @@ def visualize_heatmap(fn, history, extent, fname="particles.gif", output = "show
         average_x = np.mean(x_points)
         average_y = np.mean(y_points)
         avg_pos.set_data(average_x, average_y)
+        ab.xy = (average_x, average_y)
         
         # update motion lines
         num_frames = min(20, i)
