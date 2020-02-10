@@ -38,7 +38,7 @@ def visualize_heatmap(fn, history, extent, fname="particles.gif", output = "show
 
     average_x = np.mean([p["pos"][0] for p in history[0]])
     average_y = np.mean([p["pos"][1] for p in history[0]])
-    ax.plot(average_x, average_y, "r*")
+    avg_pos, = ax.plot(average_x, average_y, "r*")
     
     # Create initial scatterplot
     x_points = [p["pos"][0] for p in history[0]]
@@ -61,6 +61,7 @@ def visualize_heatmap(fn, history, extent, fname="particles.gif", output = "show
 
         average_x = np.mean(x_points)
         average_y = np.mean(y_points)
+        avg_pos.set_data(average_x, average_y)
         
         # update motion lines
         num_frames = min(20, i)
