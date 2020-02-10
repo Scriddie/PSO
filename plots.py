@@ -9,6 +9,7 @@ import utils
 import seaborn as sns
 import imageio
 import time
+from utils import distance_mse
 
 def plot_3d(fn, x1_low, x1_high, x2_low, x2_high, stepsize=0.1):
     # Create 2d raster
@@ -27,12 +28,14 @@ def visualize_heatmap(fn, history, extent, trail_lenght = 20,
     fname="particles.gif", output = "show"):
     fig = plt.figure()
     ax = plt.axes()
+    plt.xlim(-2.0, 2.0)
+    plt.ylim(-2.0, 2.0)
 
     # Step number needs to be global for the interactive stepping
     global step_num
     step_num = 0
 
-    textstr = f'Step = {step_num}'
+    
     # these are matplotlib.patch.Patch properties for the textboax
     props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)
     
@@ -64,6 +67,12 @@ def visualize_heatmap(fn, history, extent, trail_lenght = 20,
     x_points = [p["pos"][0] for p in history[0]]
     y_points = [p["pos"][1] for p in history[0]]
     sc = ax.scatter(x=x_points, y=y_points, color="black", zorder=2)
+
+    # Create the initial textstring
+    avg_mse = distance_mse([average_x], [average_y], minimum.x[0], minimum.x[1])
+    sum_mse = distance_mse(x_points, y_points, minimum.x[0], minimum.x[1])
+
+    textstr = f'Step        : {step_num}\nAvg MSE : {avg_mse:.4f}\nSum MSE: {sum_mse:.4f}'
     
     # Create initial lineplots
     num_particles = len(history[0])
@@ -80,10 +89,6 @@ def visualize_heatmap(fn, history, extent, trail_lenght = 20,
     def animate(i):
         state = history[i]
 
-        # Update the text box
-        textstr = f'Step = {int(i)}'
-        label.set_text(textstr)
-
         # update particles
         x_points = [p["pos"][0] for p in state]
         y_points = [p["pos"][1] for p in state]
@@ -96,6 +101,13 @@ def visualize_heatmap(fn, history, extent, trail_lenght = 20,
 
         # update the position of the nyan cat
         ab.xybox = (average_x, average_y)
+
+        # Update the text box
+        avg_mse = distance_mse([average_x], [average_y], minimum.x[0], minimum.x[1])
+        sum_mse = distance_mse(x_points, y_points, minimum.x[0], minimum.x[1])
+
+        textstr = f'Step        : {step_num}\nAvg MSE : {avg_mse:.4f}\nSum MSE: {sum_mse:.4f}'
+        label.set_text(textstr)
         
         # update motion lines
         num_frames = min(trail_lenght, i)
