@@ -34,7 +34,11 @@ def visualize_heatmap(fn, history, extent, fname="particles.gif", output = "show
     fig.colorbar(patch, ax=ax)
 
     minimum = minimize(fn, [0, 0])
-    plt.plot(minimum.x[0], minimum.x[1], 'g*')
+    ax.plot(minimum.x[0], minimum.x[1], "g*")
+
+    average_x = np.mean([p["pos"][0] for p in history[0]])
+    average_y = np.mean([p["pos"][1] for p in history[0]])
+    ax.plot(average_x, average_y, "r*")
     
     # Create initial scatterplot
     x_points = [p["pos"][0] for p in history[0]]
@@ -54,12 +58,15 @@ def visualize_heatmap(fn, history, extent, fname="particles.gif", output = "show
         x_points = [p["pos"][0] for p in state]
         y_points = [p["pos"][1] for p in state]
         sc.set_offsets(np.c_[x_points,y_points])
+
+        average_x = np.mean(x_points)
+        average_y = np.mean(y_points)
         
         # update motion lines
         num_frames = min(20, i)
         x_steps = np.empty((num_particles, num_frames))
         y_steps = np.empty((num_particles, num_frames))
-        
+
         for frame, all_particles in enumerate(history[i-num_frames:i]):
             for p_index, particle in enumerate(all_particles):
                 x_steps[p_index, frame] = particle["pos"][0]
