@@ -41,32 +41,35 @@ def visualize_heatmap(fn, history, extent, trail_lenght = 20,
     Y = np.arange(extent[2], extent[3], 0.1)
     X_grid, Y_grid = np.meshgrid(X, Y)
     Z = fn([X_grid, Y_grid])
-    patch = plt.imshow(Z, extent=extent, cmap=cm.jet)
+    patch = plt.imshow(Z, extent=extent, cmap=cm.jet, zorder = 0)
     fig.colorbar(patch, ax=ax)
 
+    # Draw a star for the minimum   
     minimum = minimize(fn, [0, 0])
     ax.plot(minimum.x[0], minimum.x[1], "r*")
 
+    # Draw a star for the average plot
     average_x = np.mean([p["pos"][0] for p in history[0]])
     average_y = np.mean([p["pos"][1] for p in history[0]])
     avg_pos, = ax.plot(average_x, average_y, "y*")
 
-    rainbow_cat = mpimg.imread('e289217a-3614-4e78-b7dc-c4cb4fdd0ff2.jfif')
+    rainbow_cat = mpimg.imread('nyancat.png')
     imagebox = OffsetImage(rainbow_cat, zoom=0.1)
-    ab = AnnotationBbox(imagebox, xy=(average_x, average_y), xycoords="data")
+    ab = AnnotationBbox(imagebox, xy=(average_x, average_y), xycoords="data" , frameon=False)
     # ab.set_animated(True)
     ax.add_artist(ab)
+    # ax.plot(ab)
     
     # Create initial scatterplot
     x_points = [p["pos"][0] for p in history[0]]
     y_points = [p["pos"][1] for p in history[0]]
-    sc = ax.scatter(x=x_points, y=y_points, color="black")
+    sc = ax.scatter(x=x_points, y=y_points, color="black", zorder=2)
     
     # Create initial lineplots
     num_particles = len(history[0])
     lines = []
     for i in range(num_particles):
-        lines.append(ax.plot(0, 0, color="blue")[0])
+        lines.append(ax.plot(0, 0, color="blue", zorder = 1)[0])
 
     # Create the initial text plot
     # place a text box in upper left in axes coords
@@ -86,10 +89,13 @@ def visualize_heatmap(fn, history, extent, trail_lenght = 20,
         y_points = [p["pos"][1] for p in state]
         sc.set_offsets(np.c_[x_points,y_points])
 
+        # update the position of the mean star
         average_x = np.mean(x_points)
         average_y = np.mean(y_points)
         avg_pos.set_data(average_x, average_y)
-        ab.xy = (average_x, average_y)
+
+        # update the position of the nyan cat
+        ab.xybox = (average_x, average_y)
         
         # update motion lines
         num_frames = min(trail_lenght, i)
