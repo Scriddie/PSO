@@ -21,4 +21,9 @@ y = [3,4,5,6,7,8]
 plt.plot(x[1:], y[1:], 'ro')
 plt.plot(x[0], y[0], 'g*')
 
+fig= plt.figure()
+ax = plt.axes()
+bla, = ax.plot(x[0], y[0], 'g*')
+
+bla.set_data(1, 3)
 plt.show()

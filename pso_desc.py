@@ -3,6 +3,7 @@ initialize swarm, update location on each iteration
 """
 import numpy as np
 from copy import deepcopy
+import os
 import plots
 import utils
 import matplotlib.pyplot as plt
@@ -80,8 +81,8 @@ def train(fn, grad_fn, num_particles, num_iter, extent):
     history = []
     for i in range(num_iter):
         a = (num_iter*2 - i) / (num_iter*2)
-        b = (num_iter*2 - i) / (num_iter*2)
-        c = 1
+        b = (num_iter*5 - i) / (num_iter*5)
+        c = 2 + 20 * (i/num_iter)
         d = 0
         n = 10
         if len(best_pos_hist) >= n:
@@ -126,13 +127,15 @@ def debug(history):
 
 
 if __name__ == "__main__":
-    fn = utils.rastrigin
-    grad_fn = utils.rastrigin_grad
-    # fn = utils.rosenbrock
-    # grad_fn = utils.rosenbrock_grad
+    img_dir = ""
+    # fn = utils.rastrigin
+    # grad_fn = utils.rastrigin_grad
+    fn = utils.rosenbrock
+    grad_fn = utils.rosenbrock_grad
     extent = [-2, 2, -2, 2]
-    history = train(fn, grad_fn, 20, 500, extent)
+    history = train(fn, grad_fn, 50, 1000, extent)
     debug(history)
-    plots.visualize_heatmap(fn, history, extent, "pso_desc_rastrigin.gif")
+    plots.visualize_heatmap(fn, history, extent, 
+      os.path.join(img_dir, "pso_rastrigin.gif"), output="step")
 
 
