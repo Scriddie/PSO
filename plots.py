@@ -29,7 +29,10 @@ def visualize_heatmap(fn, history, extent, fname="particles.gif"):
     Y = np.arange(extent[2], extent[3], 0.1)
     X_grid, Y_grid = np.meshgrid(X, Y)
     Z = fn(X_grid, Y_grid)
-    plt.imshow(Z, extent=extent, cmap=cm.jet)
+    patch = plt.imshow(Z, extent=extent, cmap=cm.jet)
+    
+    # Add colorbar
+    fig.colorbar(patch, ax=ax)
     
     # Create initial scatterplot
     x_points = [p["pos"][0] for p in history[0]]

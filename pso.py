@@ -6,13 +6,7 @@ from copy import deepcopy
 import plots
 import utils
 import matplotlib.pyplot as plt
-from matplotlib import cm
 import seaborn as sns
-import imageio
-from scipy import optimize
-from importlib import reload
-reload(plots)
-reload(utils)
 
 best_fitness = np.inf
 best_fit_hist = [deepcopy(best_fitness)]
@@ -80,8 +74,8 @@ def train(fn, num_particles, num_iter, extent):
     for i in range(num_iter):
         a = (num_iter * 3 - i) / (num_iter * 3)
         # b = (num_iter * 5 - i) / (num_iter * 5)
-        b = 1
-        c = 1
+        b = 2
+        c = 2
         particles = update(fn, particles, a, b, c)
         history.append(deepcopy(particles))
         best_pos_hist.append(deepcopy(best_position))
