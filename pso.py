@@ -79,9 +79,9 @@ def train(fn, num_particles, num_iter, extent):
     history = []
     for i in range(num_iter):
         a = (num_iter * 3 - i) / (num_iter * 3)
-        # b = (num_iter * 5 - i) / (num_iter * 5)
+        b = (num_iter * 5 - i) / (num_iter * 5)
         b = 2
-        c = 2
+        c = 2 + 20 * (i/num_iter)
         particles = update(fn, particles, a, b, c)
         history.append(deepcopy(particles))
         best_pos_hist.append(deepcopy(best_position))
@@ -117,26 +117,26 @@ if __name__ == "__main__":
     img_dir = ""
     
     extent = [-2, 2, -2, 2]
-    num_particles = 20
-    num_iter = 100
+    num_particles = 50
+    num_iter = 1000
 
     # Set the output type, options are: "show" for showing the animation, 
     # "step" for stepping though the frames and "save" for saving the animation to a gif
     output = "step"
 
     # TODO: rosenbrock minimum should be 1, 1 !!!
-    fn = utils.rosenbrock
-    history = train(fn, num_particles, num_iter, extent)
-    debug(history)
-    plots.visualize_heatmap(fn, history, extent, 
-        os.path.join(img_dir, "pso_rosenbrock.gif"), output = output)
-
-    # TODO: rastrigin minimum should be 0, 0
-    # fn = utils.rastrigin
+    # fn = utils.rosenbrock
     # history = train(fn, num_particles, num_iter, extent)
     # debug(history)
     # plots.visualize_heatmap(fn, history, extent, 
-    #   os.path.join(img_dir, "pso_rastrigin.gif"), output = output)
+    #     os.path.join(img_dir, "pso_rosenbrock.gif"), output=output)
+
+    # TODO: rastrigin minimum should be 0, 0
+    fn = utils.rastrigin
+    history = train(fn, num_particles, num_iter, extent)
+    debug(history)
+    plots.visualize_heatmap(fn, history, extent, 
+      os.path.join(img_dir, "pso_rastrigin.gif"), output=output)
 
 
 

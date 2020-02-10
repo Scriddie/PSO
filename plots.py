@@ -34,11 +34,11 @@ def visualize_heatmap(fn, history, extent, fname="particles.gif", output = "show
     fig.colorbar(patch, ax=ax)
 
     minimum = minimize(fn, [0, 0])
-    ax.plot(minimum.x[0], minimum.x[1], "g*")
+    ax.plot(minimum.x[0], minimum.x[1], "r*")
 
     average_x = np.mean([p["pos"][0] for p in history[0]])
     average_y = np.mean([p["pos"][1] for p in history[0]])
-    avg_pos, = ax.plot(average_x, average_y, "r*")
+    avg_pos, = ax.plot(average_x, average_y, "y*")
     
     # Create initial scatterplot
     x_points = [p["pos"][0] for p in history[0]]
