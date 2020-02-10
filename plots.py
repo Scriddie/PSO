@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits import mplot3d
 from matplotlib import cm, animation
+from scipy.optimize import minimize
 import utils
 import seaborn as sns
 import imageio
@@ -28,11 +29,12 @@ def visualize_heatmap(fn, history, extent, fname="particles.gif"):
     X = np.arange(extent[0], extent[1], 0.1)
     Y = np.arange(extent[2], extent[3], 0.1)
     X_grid, Y_grid = np.meshgrid(X, Y)
-    Z = fn(X_grid, Y_grid)
+    Z = fn([X_grid, Y_grid])
     patch = plt.imshow(Z, extent=extent, cmap=cm.jet)
-    
-    # Add colorbar
     fig.colorbar(patch, ax=ax)
+
+    minimum = minimize(fn, [0, 0])
+    plt.plot(minimum.x[0], minimum.x[1], 'g*')
     
     # Create initial scatterplot
     x_points = [p["pos"][0] for p in history[0]]

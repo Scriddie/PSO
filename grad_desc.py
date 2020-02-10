@@ -27,7 +27,7 @@ def gradient_descent(fn, fn_grad, pos, fname="particles.png"):
     X = np.arange(extent[0], extent[1], 0.1)
     Y = np.arange(extent[2], extent[3], 0.1)
     X_grid, Y_grid = np.meshgrid(X, Y)
-    Z = fn(X_grid, Y_grid)
+    Z = fn([X_grid, Y_grid])
     plt.imshow(Z, extent=extent, cmap='hot')
     pos_x = [i[0] for i in pos_history]
     pos_y = [i[1] for i in pos_history]

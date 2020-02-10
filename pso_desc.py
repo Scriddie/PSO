@@ -34,7 +34,7 @@ def initialize(fn, n, x_min, x_max, y_min, y_max):
     # TODO: this doesnt seem to work
     for p in particles:
         p["best_pos"] = deepcopy(p["pos"])
-        p["fit"] = deepcopy(fn(p["pos"][0], p["pos"][1]))
+        p["fit"] = deepcopy(fn(p["pos"]))
         p["best_fit"] = deepcopy(p["fit"])
         if p["fit"] < best_fitness:
             best_fitness = deepcopy(p["fit"])
@@ -63,7 +63,7 @@ def update(fn, grad_fn, particles, a, b, c, d):
     for i, p in enumerate(particles):
         p["v"] = update[i]
         p["pos"] += update[i] * 0.01  # treat dem particles carefully
-        p["fit"] = fn(p["pos"][0], p["pos"][1])
+        p["fit"] = fn(p["pos"])
         if p["fit"] < p["best_fit"]:
             p["best_fit"] = deepcopy(p["fit"])
             p["best_pos"] = deepcopy(p["pos"])
@@ -119,9 +119,10 @@ def debug(history):
         avg_v = np.round(np.mean(v), 3)
         avg_x = np.round(np.mean([p["pos"][0] for p in state]))
         avg_y = np.round(np.mean([p["pos"][1] for p in state]))
-        print(f"{i} - best_position: {np.round(best_pos_hist[i], 3)} " + 
-              f"({np.round(best_fit_hist[i])}) - avg speed: {avg_v}" +
-              f"- avg position: ({avg_x}, {avg_y})")
+        if (i % 50) == 0:
+            print(f"{i} - best_position: {np.round(best_pos_hist[i], 3)} " + 
+                f"({np.round(best_fit_hist[i])}) - avg speed: {avg_v}" +
+                f"- avg position: ({avg_x}, {avg_y})")
 
 
 if __name__ == "__main__":
@@ -130,7 +131,7 @@ if __name__ == "__main__":
     # fn = utils.rosenbrock
     # grad_fn = utils.rosenbrock_grad
     extent = [-2, 2, -2, 2]
-    history = train(fn, grad_fn, 20, 5000, extent)
+    history = train(fn, grad_fn, 20, 500, extent)
     debug(history)
     plots.visualize_heatmap(fn, history, extent, "pso_desc_rastrigin.gif")
 

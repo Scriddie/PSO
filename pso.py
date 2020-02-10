@@ -34,7 +34,7 @@ def initialize(fn, n, x_min, x_max, y_min, y_max):
     # TODO: this doesnt seem to work
     for p in particles:
         p["best_pos"] = deepcopy(p["pos"])
-        p["fit"] = deepcopy(fn(p["pos"][0], p["pos"][1]))
+        p["fit"] = deepcopy(fn(p["pos"]))
         p["best_fit"] = deepcopy(p["fit"])
         if p["fit"] < best_fitness:
             best_fitness = deepcopy(p["fit"])
@@ -62,7 +62,7 @@ def update(fn, particles, a, b, c):
     for i, p in enumerate(particles):
         p["v"] = update[i]
         p["pos"] += update[i] * 0.01  # treat dem particles carefully
-        p["fit"] = fn(p["pos"][0], p["pos"][1])
+        p["fit"] = fn(p["pos"])
         if p["fit"] < p["best_fit"]:
             p["best_fit"] = deepcopy(p["fit"])
             p["best_pos"] = deepcopy(p["pos"])
@@ -106,7 +106,7 @@ def debug(history):
         avg_v = np.round(np.mean(v), 3)
         avg_x = np.round(np.mean([p["pos"][0] for p in state]))
         avg_y = np.round(np.mean([p["pos"][1] for p in state]))
-        if (i % 5) == 0: 
+        if (i % 50) == 0: 
             print(f"{i} - best_position: {np.round(best_pos_hist[i], 3)} " + 
                 f"({np.round(best_fit_hist[i])}) - avg speed: {avg_v}" +
                 f"- avg position: ({avg_x}, {avg_y})")
@@ -118,7 +118,7 @@ if __name__ == "__main__":
     
     extent = [-2, 2, -2, 2]
     num_particles = 20
-    num_iter = 5000
+    num_iter = 1000
 
     # TODO: rosenbrock minimum should be 1, 1 !!!
     fn = utils.rosenbrock
