@@ -63,8 +63,8 @@ def visualize_heatmap(fn, history, extent, fname="particles.gif"):
         for i, line in enumerate(lines):
             line.set_data(x_steps[i], y_steps[i])
             
-    anim = animation.FuncAnimation(fig, animate, 60, interval=1000, blit=False)
-    anim.save(fname, writer='imagemagick', fps=120)
+    anim = animation.FuncAnimation(fig, animate, len(history), interval=20, blit=False)
+    anim.save(fname, writer='imagemagick', fps=60)
 
 
 def visualize_3D(fn, history):
