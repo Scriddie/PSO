@@ -6,7 +6,7 @@ from scipy.optimize import minimize
 import utils
 import seaborn as sns
 import imageio
-
+import time
 
 def plot_3d(fn, x1_low, x1_high, x2_low, x2_high, stepsize=0.1):
     # Create 2d raster
@@ -21,7 +21,7 @@ def plot_3d(fn, x1_low, x1_high, x2_low, x2_high, stepsize=0.1):
     ax.plot_surface(x1, x2, y, cmap=cm.plasma, linewidth=0, antialiased=False)
     plt.show()
 
-def visualize_heatmap(fn, history, extent, fname="particles.gif"):
+def visualize_heatmap(fn, history, extent, fname="particles.gif", output = "show"):
     fig = plt.figure()
     ax = plt.axes()
     
@@ -67,9 +67,36 @@ def visualize_heatmap(fn, history, extent, fname="particles.gif"):
             
         for i, line in enumerate(lines):
             line.set_data(x_steps[i], y_steps[i])
-            
-    anim = animation.FuncAnimation(fig, animate, len(history), interval=20, blit=False)
-    anim.save(fname, writer='imagemagick', fps=60)
+    
+    if(output == "step"):
+        # Step through the frames
+        global index
+        index = 0       
+        
+        def on_keyboard(event):
+            global index
+            if event.key == 'right':
+                if(index < len(history)):
+                    index += 1
+            elif event.key == 'left':
+                if(index != 0):
+                    index -= 1
+                
+            animate(index)
+
+            fig.canvas.draw()
+            fig.canvas.flush_events()
+
+        plt.gcf().canvas.mpl_connect('key_press_event', on_keyboard)
+        plt.show()
+
+    else:
+        anim = animation.FuncAnimation(fig, animate, len(history), interval=20, blit=False)
+        
+        if(output == "show"):
+            plt.show()
+        elif(output == "save"):
+            anim.save(fname, writer='imagemagick', fps=60)
 
 
 def visualize_3D(fn, history):
