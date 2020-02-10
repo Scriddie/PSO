@@ -7,6 +7,12 @@ import plots
 import utils
 import matplotlib.pyplot as plt
 import seaborn as sns
+import imageio
+import os
+from scipy import optimize
+from importlib import reload
+reload(plots)
+reload(utils)
 
 best_fitness = np.inf
 best_fit_hist = [deepcopy(best_fitness)]
@@ -100,28 +106,31 @@ def debug(history):
         avg_v = np.round(np.mean(v), 3)
         avg_x = np.round(np.mean([p["pos"][0] for p in state]))
         avg_y = np.round(np.mean([p["pos"][1] for p in state]))
-        print(f"{i} - best_position: {np.round(best_pos_hist[i], 3)} " + 
-              f"({np.round(best_fit_hist[i])}) - avg speed: {avg_v}" +
-              f"- avg position: ({avg_x}, {avg_y})")
+        if (i % 5) == 0: 
+            print(f"{i} - best_position: {np.round(best_pos_hist[i], 3)} " + 
+                f"({np.round(best_fit_hist[i])}) - avg speed: {avg_v}" +
+                f"- avg position: ({avg_x}, {avg_y})")
 
 
 if __name__ == "__main__":
 
-    # TODO: somehow the particles seem to think 1, 1 is 0 for rastrigin
+    img_dir = ""
     
     extent = [-2, 2, -2, 2]
     num_particles = 20
-    num_iter = 500
+    num_iter = 5000
 
+    # TODO: rosenbrock minimum should be 1, 1 !!!
     fn = utils.rosenbrock
     history = train(fn, num_particles, num_iter, extent)
     debug(history)
-    plots.visualize_heatmap(fn, history, extent, "gifs_to_keep/pso_rosenbrock.gif")
+    plots.visualize_heatmap(fn, history, extent, os.path.join(img_dir, "pso_rosenbrock.gif"))
 
+    # TODO: rastrigin minimum should be 0, 0
     fn = utils.rastrigin
     history = train(fn, num_particles, num_iter, extent)
     debug(history)
-    plots.visualize_heatmap(fn, history, extent, "gifs_to_keep/pso_rastrigin.gif")
+    plots.visualize_heatmap(fn, history, extent, os.path.join(img_dir, "pso_rastrigin.gif"))
 
 
 

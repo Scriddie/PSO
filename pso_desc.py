@@ -92,7 +92,7 @@ def train(fn, grad_fn, num_particles, num_iter, extent):
                     if np.round(i[j], 3) == np.round(last[j], 3):
                         counter += 1
             if counter >= 2*n:
-                print("Cruising")
+                print("Applying grad desc")
                 d = 1e-2
         particles = update(fn=fn, grad_fn=grad_fn, particles=particles, 
             a=a, b=b, c=c, d=d)
@@ -130,8 +130,8 @@ if __name__ == "__main__":
     # fn = utils.rosenbrock
     # grad_fn = utils.rosenbrock_grad
     extent = [-2, 2, -2, 2]
-    history = train(fn, grad_fn, 20, 500, extent)
+    history = train(fn, grad_fn, 20, 5000, extent)
     debug(history)
-    plots.visualize_heatmap(fn, history, extent, "gifs_to_keep/pso_desc_rastrigin.gif")
+    plots.visualize_heatmap(fn, history, extent, "pso_desc_rastrigin.gif")
 
 
