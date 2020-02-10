@@ -113,7 +113,6 @@ def debug(history):
 
 
 if __name__ == "__main__":
-
     img_dir = ""
     
     extent = [-2, 2, -2, 2]
@@ -125,19 +124,24 @@ if __name__ == "__main__":
     output = "step"
 
     # Set the line lenght of the trailing line
-    trail_lenght = 1000
+    trail_lenght = 50
 
-    # # TODO: rosenbrock minimum should be 1, 1 !!!
-    # fn = utils.rosenbrock
-    # history = train(fn, num_particles, num_iter, extent)
-    # debug(history)
-    # plots.visualize_heatmap(fn, history, extent, trail_lenght=trail_lenght, 
-    #     fname=os.path.join(img_dir, "pso_rosenbrock.gif"), output=output)
+    functions = [utils.rosenbrock, utils.rastrigin]
+    function_num = 0 # 0: rosenbrock, 1: rastrigin
 
-    # TODO: rastrigin minimum should be 0, 0
-    fn = utils.rastrigin
+    # # Loop through all the functions
+    # for function_num in rnage(len(functions)):
+
+    fn = functions[function_num]
+
+    file_name = "pso"
+    if(function_num == 0):
+        file_name = "pso_rosenbrock"
+    elif(function_num == 1):
+        file_name = "pso_rastrigin"
+
     history = train(fn, num_particles, num_iter, extent)
     debug(history)
     plots.visualize_heatmap(fn, history, extent, trail_lenght = trail_lenght,
-      fname=os.path.join(img_dir, "pso_rastrigin.gif"), output = output)
+      fname=os.path.join(img_dir, file_name+".gif"), output = output)
 

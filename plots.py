@@ -78,7 +78,7 @@ def visualize_heatmap(fn, history, extent, trail_lenght = 20,
     num_particles = len(history[0])
     lines = []
     for i in range(num_particles):
-        lines.append(ax.plot(0, 0, color="blue", zorder = 1)[0])
+        lines.append(ax.plot(0, 0, color="grey", zorder = 1)[0])
 
     # Create the initial text plot
     # place a text box in upper left in axes coords
