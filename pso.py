@@ -78,8 +78,8 @@ def train(fn, num_particles, num_iter, extent):
     particles = initialize(fn, num_particles, *extent)
     history = []
     for i in range(num_iter):
-        a = (num_iter * 3 - i) / (num_iter * 3)
-        b = (num_iter * 5 - i) / (num_iter * 5)
+        a = 1 - 0.35 * (i / num_iter)
+        b = 1 - 0.2 * (i / num_iter)
         b = 2
         c = 2 + 20 * (i/num_iter)
         particles = update(fn, particles, a, b, c)
@@ -122,7 +122,7 @@ if __name__ == "__main__":
 
     # Set the output type, options are: "show" for showing the animation, 
     # "step" for stepping though the frames and "save" for saving the animation to a gif
-    output = "step"
+    output = "save"
 
     # TODO: rosenbrock minimum should be 1, 1 !!!
     # fn = utils.rosenbrock
