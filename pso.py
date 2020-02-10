@@ -118,7 +118,7 @@ if __name__ == "__main__":
     
     extent = [-2, 2, -2, 2]
     num_particles = 20
-    num_iter = 1000
+    num_iter = 100
 
     # TODO: rosenbrock minimum should be 1, 1 !!!
     fn = utils.rosenbrock
