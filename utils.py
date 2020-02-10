@@ -24,3 +24,17 @@ def rastrigin_grad(pos, A=10):
     x_grad = A * len(pos) + 2*x - 10*np.sin(2*np.pi*x) * 2*np.pi
     y_grad = A * len(pos) + 2*y - 10*np.sin(2*np.pi*y) * 2*np.pi
     return np.array([x_grad, y_grad])
+
+def distance_mse(x_points, y_points, x_true, y_true):
+    # First calculate the Euclidian distance then take the mse
+    sum = 0
+    for i in range(len(x_points)):
+        # Calculate the euclidian distance
+        dist = np.sqrt((x_points[i] - x_true)**2 + (y_points[i] - y_true)**2)
+
+        # The true distance is 0
+        dist_true = 0
+        sum += (dist - dist_true)**2
+
+    mse = sum/float(len(x_points))
+    return mse
