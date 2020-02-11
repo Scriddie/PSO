@@ -44,7 +44,7 @@ def visualize_heatmap(fn, history, extent, trail_lenght = 20,
     Y = np.arange(extent[2], extent[3], 0.1)
     X_grid, Y_grid = np.meshgrid(X, Y)
     Z = fn([X_grid, Y_grid])
-    patch = plt.imshow(Z, extent=extent, cmap=cm.jet, zorder = 0)
+    patch = plt.imshow(Z, extent=extent, cmap=cm.jet, zorder=0, origin="lower")
     fig.colorbar(patch, ax=ax)
 
     # Draw a star for the minimum   

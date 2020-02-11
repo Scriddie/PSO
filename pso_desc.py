@@ -54,7 +54,7 @@ def update(fn, grad_fn, particles, a, b, c, d):
         own_best_diff = b * r_own * -(p["pos"] - p["best_pos"])
         global_best_diff = c * r_global * -(p["pos"] - best_position)
         grad = d * grad_fn(p["pos"])
-        v = (prev_speed + own_best_diff + global_best_diff + grad)
+        v = (prev_speed + own_best_diff + global_best_diff - grad)
         v_total = np.sqrt(np.sum(np.square(v)))
         # some rather arbitrary speed clipping
         max_speed = 2
@@ -128,14 +128,37 @@ def debug(history):
 
 if __name__ == "__main__":
     img_dir = ""
-    # fn = utils.rastrigin
-    # grad_fn = utils.rastrigin_grad
-    fn = utils.rosenbrock
-    grad_fn = utils.rosenbrock_grad
+    
     extent = [-2, 2, -2, 2]
-    history = train(fn, grad_fn, 50, 1000, extent)
+    num_particles = 50
+    num_iter = 1000
+
+    # Set the output type, options are: "show" for showing the animation, 
+    # "step" for stepping though the frames and "save" for saving the animation to a gif
+    output = "save"
+
+    # Set the line lenght of the trailing line
+    trail_lenght = 50
+
+    functions = [utils.rosenbrock, utils.rastrigin]
+    grad_functions = [utils.rosenbrock_grad, utils.rastrigin_grad]
+    function_num = 0  # 0: rosenbrock, 1: rastrigin
+
+    # # Loop through all the functions
+    # for function_num in rnage(len(functions)):
+
+    fn = functions[function_num]
+    grad_fn = grad_functions[function_num]
+
+    file_name = "pso"
+    if(function_num == 0):
+        file_name = "pso_desc_rosenbrock"
+    elif(function_num == 1):
+        file_name = "pso_desc_rastrigin"
+
+    history = train(fn, grad_fn, num_particles, num_iter, extent)
     debug(history)
-    plots.visualize_heatmap(fn, history, extent, 
-      os.path.join(img_dir, "pso_rastrigin.gif"), output="step")
+    plots.visualize_heatmap(fn, history, extent, trail_lenght = trail_lenght,
+      fname=os.path.join(img_dir, file_name+".gif"), output = output)
 
 
