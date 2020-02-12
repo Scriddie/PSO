@@ -33,14 +33,3 @@ class MyGame(arcade.Window):
         arcade.start_render()
         arcade.draw_polygon_filled(np.array([[20,20],[30,30],[20,30]]), color=arcade.csscolor.BLACK)
         # Code to draw the screen goes here
-
-
-def main():
-    """ Main method """
-    window = MyGame()
-    window.setup()
-    arcade.run()
-
-
-if __name__ == "__main__":
-    main()

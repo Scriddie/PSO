@@ -1,4 +1,7 @@
 from gui.game import MyGame
+import arcade
 
 if __name__ == "__main__":
-    pass
+    window = MyGame()
+    window.setup()
+    arcade.run()
