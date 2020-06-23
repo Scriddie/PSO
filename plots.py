@@ -9,6 +9,7 @@ import utils
 import seaborn as sns
 import imageio
 import time
+from utils import distance_mse
 
 def plot_3d(fn, x1_low, x1_high, x2_low, x2_high, stepsize=0.1):
     # Create 2d raster
@@ -23,57 +24,93 @@ def plot_3d(fn, x1_low, x1_high, x2_low, x2_high, stepsize=0.1):
     ax.plot_surface(x1, x2, y, cmap=cm.plasma, linewidth=0, antialiased=False)
     plt.show()
 
-def visualize_heatmap(fn, history, extent, fname="particles.gif", output = "show"):
+def visualize_heatmap(fn, history, extent, trail_lenght = 20,
+    fname="particles.gif", output = "show"):
     fig = plt.figure()
     ax = plt.axes()
+    plt.xlim(-2.0, 2.0)
+    plt.ylim(-2.0, 2.0)
+
+    # Step number needs to be global for the interactive stepping
+    global step_num
+    step_num = 0
+
+    
+    # these are matplotlib.patch.Patch properties for the textboax
+    props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)
     
     # Create heatmap
     X = np.arange(extent[0], extent[1], 0.1)
     Y = np.arange(extent[2], extent[3], 0.1)
     X_grid, Y_grid = np.meshgrid(X, Y)
     Z = fn([X_grid, Y_grid])
-    patch = plt.imshow(Z, extent=extent, cmap=cm.jet)
+    patch = plt.imshow(Z, extent=extent, cmap=cm.jet, zorder=0, origin="lower")
     fig.colorbar(patch, ax=ax)
 
+    # Draw a star for the minimum   
     minimum = minimize(fn, [0, 0])
     ax.plot(minimum.x[0], minimum.x[1], "r*")
 
+    # Draw a star for the average plot
     average_x = np.mean([p["pos"][0] for p in history[0]])
     average_y = np.mean([p["pos"][1] for p in history[0]])
     avg_pos, = ax.plot(average_x, average_y, "y*")
 
-    # rainbow_cat = mpimg.imread('e289217a-3614-4e78-b7dc-c4cb4fdd0ff2.jfif')
-    # imagebox = OffsetImage(rainbow_cat, zoom=0.1)
-    # ab = AnnotationBbox(imagebox, xy=(average_x, average_y), xycoords="data")
-    # # ab.set_animated(True)
-    # ax.add_artist(ab)
+    rainbow_cat = mpimg.imread('nyancat.png')
+    imagebox = OffsetImage(rainbow_cat, zoom=0.1)
+    ab = AnnotationBbox(imagebox, xy=(average_x, average_y), xycoords="data" , frameon=False)
+    # ab.set_animated(True)
+    ax.add_artist(ab)
+    # ax.plot(ab)
     
     # Create initial scatterplot
     x_points = [p["pos"][0] for p in history[0]]
     y_points = [p["pos"][1] for p in history[0]]
-    sc = ax.scatter(x=x_points, y=y_points, color="black")
+    sc = ax.scatter(x=x_points, y=y_points, color="black", zorder=2)
+
+    # Create the initial textstring
+    avg_mse = distance_mse([average_x], [average_y], minimum.x[0], minimum.x[1])
+    sum_mse = distance_mse(x_points, y_points, minimum.x[0], minimum.x[1])
+
+    textstr = f'Step        : {step_num}\nAvg MSE : {avg_mse:.4f}\nSum MSE: {sum_mse:.4f}'
     
     # Create initial lineplots
     num_particles = len(history[0])
     lines = []
     for i in range(num_particles):
-        lines.append(ax.plot(0, 0, color="blue")[0])
+        lines.append(ax.plot(0, 0, color="grey", zorder = 1)[0])
+
+    # Create the initial text plot
+    # place a text box in upper left in axes coords
+    label = ax.text(0.08, 0.94, textstr, transform=ax.transAxes, fontsize=14,
+        verticalalignment='top', bbox=props)
     
     # Function for animating scatterplot
     def animate(i):
         state = history[i]
+
         # update particles
         x_points = [p["pos"][0] for p in state]
         y_points = [p["pos"][1] for p in state]
         sc.set_offsets(np.c_[x_points,y_points])
 
+        # update the position of the mean star
         average_x = np.mean(x_points)
         average_y = np.mean(y_points)
         avg_pos.set_data(average_x, average_y)
-        # ab.xy = (average_x, average_y)
+
+        # update the position of the nyan cat
+        ab.xybox = (average_x, average_y)
+
+        # Update the text box
+        avg_mse = distance_mse([average_x], [average_y], minimum.x[0], minimum.x[1])
+        sum_mse = distance_mse(x_points, y_points, minimum.x[0], minimum.x[1])
+
+        textstr = f'Step        : {step_num}\nAvg MSE : {avg_mse:.4f}\nSum MSE: {sum_mse:.4f}'
+        label.set_text(textstr)
         
         # update motion lines
-        num_frames = min(20, i)
+        num_frames = min(trail_lenght, i)
         x_steps = np.empty((num_particles, num_frames))
         y_steps = np.empty((num_particles, num_frames))
 
@@ -86,20 +123,18 @@ def visualize_heatmap(fn, history, extent, fname="particles.gif", output = "show
             line.set_data(x_steps[i], y_steps[i])
     
     if(output == "step"):
-        # Step through the frames
-        global index
-        index = 0       
+        # Step through the frames   
         
         def on_keyboard(event):
-            global index
+            global step_num
             if event.key == 'right':
-                if(index < len(history)):
-                    index += 1
+                if(step_num < len(history)-1):
+                    step_num += 1
             elif event.key == 'left':
-                if(index != 0):
-                    index -= 1
+                if(step_num != 0):
+                    step_num -= 1
                 
-            animate(index)
+            animate(step_num)
 
             fig.canvas.draw()
             fig.canvas.flush_events()

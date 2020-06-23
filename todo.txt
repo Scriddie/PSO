@@ -1,5 +1,0 @@
-Toggle through Step by Step
-Put nice colourbar at side
-Mark final solution, print as number
-Mark actual analytical solution for comparison
-Draw cool fading lines
