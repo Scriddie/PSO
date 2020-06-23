@@ -118,23 +118,23 @@ if __name__ == "__main__":
     
     extent = [-2, 2, -2, 2]
     num_particles = 50
-    num_iter = 1000
+    num_iter = 100
 
     # Set the output type, options are: "show" for showing the animation, 
     # "step" for stepping though the frames and "save" for saving the animation to a gif
-    output = "step"
+    output = "save"
 
     # # rosenbrock minimum should be 1, 1 !!!
-    # fn = utils.rosenbrock
-    # history = train(fn, num_particles, num_iter, extent)
-    # debug(history)
-    # plots.visualize_heatmap(fn, history, extent, 
-    #     os.path.join(img_dir, "pso_rosenbrock.gif"), output=output)
-
-    # # rastrigin minimum should be 0, 0
-    fn = utils.rastrigin
+    fn = utils.rosenbrock
     history = train(fn, num_particles, num_iter, extent)
     debug(history)
     plots.visualize_heatmap(fn, history, extent, 
-      os.path.join(img_dir, "pso_rastrigin.gif"), output=output)
+        os.path.join(img_dir, "pso_rosenbrock.gif"), output=output)
+
+    # # rastrigin minimum should be 0, 0
+    # fn = utils.rastrigin
+    # history = train(fn, num_particles, num_iter, extent)
+    # debug(history)
+    # plots.visualize_heatmap(fn, history, extent, 
+    #   os.path.join(img_dir, "pso_rastrigin.gif"), output=output)
 
